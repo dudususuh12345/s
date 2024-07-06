@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cek Data NIK</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+      pre {
+        background-color: #f3f4f6;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
+      <h1 class="text-2xl font-bold mb-4">Cek Data NIK</h1>
+      <p class="mb-4">
+        Nomor Induk Kependudukan (NIK) adalah Nomor Induk Kependudukan (NIK) yang
+        tercantum pada Kartu Tanda Penduduk (KTP) dan Kartu Keluarga (KK).
+      </p>
+      <div class="mb-4">
+        <label for="nik" class="block text-gray-700">NIK</label>
+        <input type="text" id="nik" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-2" />
+      </div>
+      <button onclick="parse()" class="w-full bg-indigo-600 text-white p-2 rounded-md hover:bg-indigo-700">Cek</button>
+      <div class="mt-4">
+        <pre id="result" class="text-gray-700"></pre>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="parse_nik.js"></script>
+  <script>
+    function parse() {
+      var nik = document.getElementById("nik").value;
+      nikParse(nik, function (result) {
+        document.getElementById("result").innerHTML = syntaxHighlight(result);
+      });
+    }
+
+    function syntaxHighlight(json) {
+      if (typeof json != 'string') {
+        json = JSON.stringify(json, undefined, 2);
+      }
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?)|(\b(true|false|null)\b)|(\b\d+\b)/g, function (match) {
+        var cls = 'text-gray-900';
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'text-purple-700';
+          } else {
+            cls = 'text-green-700';
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'text-blue-700';
+        } else if (/null/.test(match)) {
+          cls = 'text-red-700';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+  </script>
+</html>
